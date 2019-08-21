@@ -24,7 +24,7 @@ void init()
         A[i] = 1+rand()%255;      
     }
     for (i = 0; i < ceil(sparsityA*(m*p)); i++) {       
-        //A[rand()%(m*p)] = 0;
+//        A[rand()%(m*p)] = 0;
         do {
         r = rand()%(m*p);
         temp[i]=r;
@@ -113,7 +113,7 @@ int main() {
     double input[100];
     int x=0;
     fstream textfile;
-    textfile.open("input.txt");
+    textfile.open("input_dgemm.txt");
     //Order of Inputs: m p n alpha beta densityA densityB
     while(! textfile.eof()){
 	textfile >> input[x];

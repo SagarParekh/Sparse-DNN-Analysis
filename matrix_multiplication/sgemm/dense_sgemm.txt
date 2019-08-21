@@ -1,0 +1,44 @@
+
+ This example computes real matrix C=alpha*A*B+beta*C using 
+ Intel(R) MKL function sgemm, where A, B, and  C are matrices and 
+ alpha and beta are double precision scalars
+
+ Initializing data for matrix multiplication C=A*B for matrix  A(1000x1000) and matrix B(1000x1000)
+
+ Allocating memory for matrices aligned on 64-byte boundary for better performance
+
+ Intializing matrix data
+
+ Computing matrix product using Intel(R) MKL dgemm function via CBLAS interface 
+
+ Computations completed.
+
+ Time for Multiplication: 0.0226056
+
+ Top left corner of matrix A: 
+ 120 3 254 80 81 155
+ 139 56 174 162 135 41
+ 60 251 64 188 148 98
+ 17 40 57 118 234 245
+ 87 81 11 163 42 46
+ 126 148 40 37 79 197
+Number of NON-Zeros in A is: 1000000
+
+ Top left corner of matrix B: 
+ 191 253 176 14 220 48
+ 11 9 158 52 251 29
+ 135 217 49 105 116 22
+ 109 124 2 107 188 51
+ 84 40 204 172 47 61
+ 184 134 158 10 167 68
+Number of NON-Zeros in B is: 1000000
+
+ Top left corner of matrix C: 
+ 1.68853e+07 1.71466e+07 1.66101e+07 1.63942e+07 1.70816e+07 1.72118e+07
+ 1.65517e+07 1.62604e+07 1.60454e+07 1.57426e+07 1.64313e+07 1.64567e+07
+ 1.68718e+07 1.70093e+07 1.67847e+07 1.64425e+07 1.70167e+07 1.64677e+07
+ 1.62399e+07 1.63027e+07 1.5704e+07 1.53946e+07 1.59993e+07 1.61875e+07
+ 1.65773e+07 1.63961e+07 1.61061e+07 1.59421e+07 1.59946e+07 1.62507e+07
+ 1.63379e+07 1.67564e+07 1.64321e+07 1.60302e+07 1.64754e+07 1.67058e+07
+ Deallocating memory
+ Example completed.
