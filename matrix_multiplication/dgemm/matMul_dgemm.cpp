@@ -12,9 +12,10 @@
 
 using namespace std;
 
-double *A, *B, *C;
-int m, n, p, i, j;
+double *A, *B, *C, *temp;
+int m, n, p, i, j, r;
 double alpha, beta, densityA, densityB, sparsityA, sparsityB;
+bool check;
 
 void init()
 {
@@ -23,13 +24,37 @@ void init()
         A[i] = 1+rand()%255;      
     }
     for (i = 0; i < ceil(sparsityA*(m*p)); i++) {       
-        A[rand()%(m*p)] = 0;
+        //A[rand()%(m*p)] = 0;
+        do {
+        r = rand()%(m*p);
+        temp[i]=r;
+        check=true;
+    	for (int j=0;j<i;j++)
+        	if (r == temp[j]) //if number is already used
+        	{
+            	check=false; //set check to false
+            	break; //no need to check the other elements of value[]
+        	}
+    	} while (!check); //loop until new, unique number is found
+        A[r] = 0;
     }   
     for (i = 0; i < (p*n); i++) {
         B[i] = 1+rand()%255;
     }
     for (i = 0; i < ceil(sparsityB*(p*n)); i++) {       
-        B[rand()%(p*n)] = 0;
+//        B[rand()%(p*n)] = 0;
+        do {
+        r = rand()%(p*n);
+        temp[i]=r;
+        check=true;
+    	for (int j=0;j<i;j++)
+        	if (r == temp[j]) //if number is already used
+        	{
+            	check=false; //set check to false
+            	break; //no need to check the other elements of value[]
+        	}
+    	} while (!check); //loop until new, unique number is found
+        B[r] = 0;
     }
 
     for (i = 0; i < (m*n); i++) {
@@ -54,7 +79,12 @@ void print_output()
         }
         cout<<"\n";
     }
-
+    int counterA=0, counterB=0;
+    for (i = 0; i < (m*p); i++) {
+        if(A[i]!=0)
+		counterA++;     
+    }
+    cout<<"Number of NON-Zeros in A is: "<<counterA<<endl;
     cout <<"\n Top left corner of matrix B: \n";
     for (i=0; i<min(p,6); i++) {
         for (j=0; j<min(n,6); j++) {
@@ -62,7 +92,11 @@ void print_output()
         }
         cout<<"\n";
     }
-
+    for (i = 0; i < (p*n); i++) {
+        if(B[i]!=0)
+		counterB++;     
+    }
+    cout<<"Number of NON-Zeros in B is: "<<counterB<<endl;
     cout <<"\n Top left corner of matrix C: \n";
     for (i=0; i<min(m,6); i++) {
         for (j=0; j<min(n,6); j++) {
@@ -101,6 +135,7 @@ int main() {
     A = new double[m*p*sizeof( double )];
     B = new double[p*n*sizeof( double )];
     C = new double[m*n*sizeof( double )];
+    temp = new double[m*n*sizeof( double )];
 
     if (A == NULL || B == NULL || C == NULL) {
         cout<<"\n ERROR: Can't allocate memory for matrices. Aborting...\n"<<endl;
