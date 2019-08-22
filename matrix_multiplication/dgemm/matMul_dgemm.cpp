@@ -22,39 +22,39 @@ void init(){
     for (i = 0; i <(m*p); i++) {
         A[i] = 1+rand()%255;
     }
-//    for (i = 0; i < ceil(sparsityA*(m*p)); i++) {
-////        A[rand()%(m*p)] = 0;
-//        do {
-//        r = rand()%(m*p);
-//        temp[i]=r;
-//        check=true;
-//    	for (int j=0;j<i;j++)
-//        	if (r == temp[j]) //if number is already used
-//        	{
-//            	check=false; //set check to false
-//            	break; //no need to check the other elements of value[]
-//        	}
-//    	} while (!check); //loop until new, unique number is found
-//        A[r] = 0;
-//    }
+   for (i = 0; i < ceil(sparsityA*(m*p)); i++) {
+//        A[rand()%(m*p)] = 0;
+       do {
+       r = rand()%(m*p);
+       temp[i]=r;
+       check=true;
+   	for (int j=0;j<i;j++)
+       	if (r == temp[j]) //if number is already used
+       	{
+           	check=false; //set check to false
+           	break; //no need to check the other elements of value[]
+       	}
+   	} while (!check); //loop until new, unique number is found
+       A[r] = 0;
+   }
     for (i = 0; i <(p*n); i++) {
         B[i] = 1+rand()%255;
     }
-//    for (i = 0; i < ceil(sparsityB*(p*n)); i++) {
-////        B[rand()%(p*n)] = 0;
-//        do {
-//        r = rand()%(p*n);
-//        temp[i]=r;
-//        check=true;
-//    	for (int j=0;j<i;j++)
-//        	if (r == temp[j]) //if number is already used
-//        	{
-//            	check=false; //set check to false
-//            	break; //no need to check the other elements of value[]
-//        	}
-//    	} while (!check); //loop until new, unique number is found
-//        B[r] = 0;
-//    }
+   for (i = 0; i < ceil(sparsityB*(p*n)); i++) {
+//        B[rand()%(p*n)] = 0;
+       do {
+       r = rand()%(p*n);
+       temp[i]=r;
+       check=true;
+   	for (int j=0;j<i;j++)
+       	if (r == temp[j]) //if number is already used
+       	{
+           	check=false; //set check to false
+           	break; //no need to check the other elements of value[]
+       	}
+   	} while (!check); //loop until new, unique number is found
+       B[r] = 0;
+   }
 
     for (i = 0; i <(m*n); i++) {
         C[i] = 0.0;
@@ -135,8 +135,18 @@ void write_output() {
   }
 	myfile<<std::endl;
 	myfile.close();
+}
 
-
+void useful_macs(){
+  int mac_count=0;
+  for (i=0; i<(m*n); i++){
+    if(A[i]!=0){
+      if(B[i]!=0){
+        mac_count++;
+      }
+    }
+  }
+  cout<<"No of Useful MAC operations are: "<<mac_count<<endl;
 
 }
 
@@ -189,7 +199,8 @@ int main() {
     total_Time += itime.count();
     std::cout << " Time for Multiplication: " << total_Time << endl;
     print_output();
-    write_output();
+    // write_output();
+    useful_macs();
     cout << " Deallocating memory" << endl;
     delete[] A;
     delete[] B;
