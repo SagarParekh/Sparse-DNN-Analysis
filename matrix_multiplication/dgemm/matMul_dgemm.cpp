@@ -17,61 +17,58 @@ int m, n, p, i, j, r;
 double alpha, beta, densityA, densityB, sparsityA, sparsityB;
 bool check;
 
-void init()
-{
+void init(){
     cout <<" Intializing matrix data\n"<<endl;
-    for (i = 0; i < (m*p); i++) {
-        A[i] = 1+rand()%255;      
+    for (i = 0; i <(m*p); i++) {
+        A[i] = 1+rand()%255;
     }
-    for (i = 0; i < ceil(sparsityA*(m*p)); i++) {       
-//        A[rand()%(m*p)] = 0;
-        do {
-        r = rand()%(m*p);
-        temp[i]=r;
-        check=true;
-    	for (int j=0;j<i;j++)
-        	if (r == temp[j]) //if number is already used
-        	{
-            	check=false; //set check to false
-            	break; //no need to check the other elements of value[]
-        	}
-    	} while (!check); //loop until new, unique number is found
-        A[r] = 0;
-    }   
-    for (i = 0; i < (p*n); i++) {
+//    for (i = 0; i < ceil(sparsityA*(m*p)); i++) {
+////        A[rand()%(m*p)] = 0;
+//        do {
+//        r = rand()%(m*p);
+//        temp[i]=r;
+//        check=true;
+//    	for (int j=0;j<i;j++)
+//        	if (r == temp[j]) //if number is already used
+//        	{
+//            	check=false; //set check to false
+//            	break; //no need to check the other elements of value[]
+//        	}
+//    	} while (!check); //loop until new, unique number is found
+//        A[r] = 0;
+//    }
+    for (i = 0; i <(p*n); i++) {
         B[i] = 1+rand()%255;
     }
-    for (i = 0; i < ceil(sparsityB*(p*n)); i++) {       
-//        B[rand()%(p*n)] = 0;
-        do {
-        r = rand()%(p*n);
-        temp[i]=r;
-        check=true;
-    	for (int j=0;j<i;j++)
-        	if (r == temp[j]) //if number is already used
-        	{
-            	check=false; //set check to false
-            	break; //no need to check the other elements of value[]
-        	}
-    	} while (!check); //loop until new, unique number is found
-        B[r] = 0;
-    }
+//    for (i = 0; i < ceil(sparsityB*(p*n)); i++) {
+////        B[rand()%(p*n)] = 0;
+//        do {
+//        r = rand()%(p*n);
+//        temp[i]=r;
+//        check=true;
+//    	for (int j=0;j<i;j++)
+//        	if (r == temp[j]) //if number is already used
+//        	{
+//            	check=false; //set check to false
+//            	break; //no need to check the other elements of value[]
+//        	}
+//    	} while (!check); //loop until new, unique number is found
+//        B[r] = 0;
+//    }
 
-    for (i = 0; i < (m*n); i++) {
+    for (i = 0; i <(m*n); i++) {
         C[i] = 0.0;
     }
 }
 
-void matmul()
-{
+void matmul(){
     cout << " Computing matrix product using Intel(R) MKL dgemm function via CBLAS interface \n"<<endl;
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 m, n, p, alpha, A, p, B, n, beta, C, n);
     cout<< " Computations completed.\n"<<endl;
 }
 
-void print_output()
-{
+void print_output(){
     cout <<"\n Top left corner of matrix A: \n";
     for (i=0; i<min(m,6); i++) {
         for (j=0; j<min(p,6); j++) {
@@ -80,9 +77,9 @@ void print_output()
         cout<<"\n";
     }
     int counterA=0, counterB=0;
-    for (i = 0; i < (m*p); i++) {
+    for (i = 0; i <(m*p); i++) {
         if(A[i]!=0)
-		counterA++;     
+		counterA++;
     }
     cout<<"Number of NON-Zeros in A is: "<<counterA<<endl;
     cout <<"\n Top left corner of matrix B: \n";
@@ -92,9 +89,9 @@ void print_output()
         }
         cout<<"\n";
     }
-    for (i = 0; i < (p*n); i++) {
+    for (i = 0; i <(p*n); i++) {
         if(B[i]!=0)
-		counterB++;     
+		counterB++;
     }
     cout<<"Number of NON-Zeros in B is: "<<counterB<<endl;
     cout <<"\n Top left corner of matrix C: \n";
@@ -106,19 +103,56 @@ void print_output()
     }
 }
 
+void write_output() {
+	fstream myfile;
+	myfile.open("input_a.txt",fstream::out);
+	for (i=0; i<(m*p); i++) {
+    myfile << A[i] << "\t";
+    if((i+1)%p==0){
+      myfile << "\n";
+    }
+  }
+	myfile<<std::endl;
+	myfile.close();
+
+  myfile.open("input_b.txt",fstream::out);
+	for (i=0; i<(p*n); i++) {
+    myfile << B[i] << "\t";
+    if((i+1)%n==0){
+      myfile << "\n";
+    }
+  }
+	myfile<<std::endl;
+	myfile.close();
+
+  myfile.open("output_c.txt",fstream::out);
+	for (i=0; i<(m*n); i++) {
+    myfile.precision(8);
+    myfile << C[i] << "\t";
+    if((i+1)%n==0){
+      myfile << "\n";
+    }
+  }
+	myfile<<std::endl;
+	myfile.close();
+
+
+
+}
+
 int main() {
 
     cout <<"\n This example computes real matrix C=alpha*A*B+beta*C using "<<endl<<" Intel(R) MKL function dgemm, where A, B, and  C are matrices and "<<endl<<" alpha and beta are double precision scalars\n"<<endl;
-   
+
     double input[100];
     int x=0;
     fstream textfile;
     textfile.open("input_dgemm.txt");
     //Order of Inputs: m p n alpha beta densityA densityB
     while(! textfile.eof()){
-	textfile >> input[x];
-        cout << " " << input[x];       
-	x++;
+      textfile >> input[x];
+      cout << " " << input[x];
+	    x++;
     }
     textfile.close();
 
@@ -126,11 +160,11 @@ int main() {
     cout <<" Initializing data for matrix multiplication C=A*B for matrix "
             " A("<<m<<"x"<<p<<") and matrix B("<<p<<"x"<<n<<")\n"<<endl;
     alpha = input[3]; beta = input[4];
-    densityA = input[5]; densityB = input[6]; 
+    densityA = input[5]; densityB = input[6];
     sparsityA = 1-densityA;
     sparsityB = 1-densityB;
     //cout <<"SparsityA is :"<< sparsityA << "sparsityB is : "<<sparsityB <<"int(sparsityB*(p*n)) is : "<<ceil(sparsityB*(p*n))<<endl;
-    
+
     cout <<" Allocating memory for matrices aligned on 64-byte boundary for better performance\n"<<endl;
     A = new double[m*p*sizeof( double )];
     B = new double[p*n*sizeof( double )];
@@ -138,11 +172,11 @@ int main() {
     temp = new double[m*n*sizeof( double )];
 
     if (A == NULL || B == NULL || C == NULL) {
-        cout<<"\n ERROR: Can't allocate memory for matrices. Aborting...\n"<<endl;
-	delete[] A;
-	delete[] B;
-	delete[] C;        
-        return 1;
+      cout<<"\n ERROR: Can't allocate memory for matrices. Aborting...\n"<<endl;
+      delete[] A;
+      delete[] B;
+      delete[] C;
+      return 1;
     }
 
     srand(time(NULL));
@@ -155,10 +189,11 @@ int main() {
     total_Time += itime.count();
     std::cout << " Time for Multiplication: " << total_Time << endl;
     print_output();
+    write_output();
     cout << " Deallocating memory" << endl;
     delete[] A;
     delete[] B;
-    delete[] C;     
+    delete[] C;
 
     cout<<" Example completed."<<endl;
 }
