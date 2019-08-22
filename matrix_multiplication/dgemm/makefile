@@ -1,6 +1,8 @@
+
 all:
 	icc -mkl -O3 matMul_dgemm.cpp
 	./a.out
+	python3 /home/sagar/Sparse-DNN-Analysis/matrix_multiplication/test/large_matmul.py
 
 clean:
 	-@rm -rvf a.out

@@ -1,5 +1,7 @@
 //g++ matMul.cpp -O3 -o matMul
-// ./matMul
+// #include <boost/python.hpp>
+// #include <Python.h>
+
 #include <cstddef>
 #include <chrono>
 #include <ctime>
@@ -12,10 +14,50 @@
 
 using namespace std;
 
-double *A, *B, *C, *temp;
-int m, n, p, i, j, r;
+double *A, *B, *C, *temp, *A2, *B2;
+int m, n, p, i, j, r, mm;
 double alpha, beta, densityA, densityB, sparsityA, sparsityB;
 bool check;
+
+int read_input(){
+  double input[10];
+  int x;
+  fstream textfile;
+  textfile.open("input_dgemm.txt");
+  //Order of Inputs: m p n alpha beta densityA densityB
+  while(! textfile.eof()){
+    textfile >> input[x];
+    if(textfile.eof()){
+      break;
+    }
+    cout << " " << input[x];
+    x++;
+  }
+  textfile.close();
+
+  m = input[0], p = input[1], n = input[2];
+  cout <<" Initializing data for matrix multiplication C=A*B for matrix "
+          " A("<<m<<"x"<<p<<") and matrix B("<<p<<"x"<<n<<")\n"<<endl;
+  alpha = input[3]; beta = input[4];
+  densityA = input[5]; densityB = input[6];
+  sparsityA = 1-densityA;
+  sparsityB = 1-densityB;
+  cout <<" Allocating memory for matrices aligned on 64-byte boundary for better performance\n"<<endl;
+  A = new double[m*p*sizeof( double )];
+  B = new double[p*n*sizeof( double )];
+  C = new double[m*n*sizeof( double )];
+  temp = new double[m*n*sizeof( double )];
+  A2 = new double[m*p*sizeof( double )];
+  // B2 = new double[p*sizeof( double )][n*sizeof( double )];
+
+  if (A == NULL || B == NULL || C == NULL) {
+    cout<<"\n ERROR: Can't allocate memory for matrices. Aborting...\n"<<endl;
+    delete[] A;
+    delete[] B;
+    delete[] C;
+    return 1;
+  }
+}
 
 void init(){
     cout <<" Intializing matrix data\n"<<endl;
@@ -139,56 +181,46 @@ void write_output() {
 
 void useful_macs(){
   int mac_count=0;
-  for (i=0; i<(m*n); i++){
-    if(A[i]!=0){
-      if(B[i]!=0){
-        mac_count++;
-      }
+  if(densityA==1 && densityB==1){
+    mac_count = (m*p)+(p*n);
+  }
+
+  for (i=0;i<m;i++){
+    for (j=0;j<p;j++){
+      A2[i*m+j] = A[(j*m)+i];
     }
   }
+  // cout <<"\n Top left corner of matrix A2: \n";
+  // for (i=0; i<min(m,6); i++) {
+  //     for (j=0; j<min(p,6); j++) {
+  //         cout <<" "<< A2[j+i*p] ;
+  //     }
+  //     cout<<"\n";
+  // }
+
+
+  // for (i=0; i<(m*n); i++){
+  //   if(A[i]!=0){
+  //     if(B[i]!=0){
+  //       mac_count++;
+  //     }
+  //   }
+  // }
   cout<<"No of Useful MAC operations are: "<<mac_count<<endl;
 
 }
 
-int main() {
+void deallocate(){
+  cout << " Deallocating memory" << endl;
+  delete[] A;
+  delete[] B;
+  delete[] C;
+  cout<<" C++ file Executed. "<<endl;
+}
 
+void main() {
     cout <<"\n This example computes real matrix C=alpha*A*B+beta*C using "<<endl<<" Intel(R) MKL function dgemm, where A, B, and  C are matrices and "<<endl<<" alpha and beta are double precision scalars\n"<<endl;
-
-    double input[100];
-    int x=0;
-    fstream textfile;
-    textfile.open("input_dgemm.txt");
-    //Order of Inputs: m p n alpha beta densityA densityB
-    while(! textfile.eof()){
-      textfile >> input[x];
-      cout << " " << input[x];
-	    x++;
-    }
-    textfile.close();
-
-    m = input[0], p = input[1], n = input[2];
-    cout <<" Initializing data for matrix multiplication C=A*B for matrix "
-            " A("<<m<<"x"<<p<<") and matrix B("<<p<<"x"<<n<<")\n"<<endl;
-    alpha = input[3]; beta = input[4];
-    densityA = input[5]; densityB = input[6];
-    sparsityA = 1-densityA;
-    sparsityB = 1-densityB;
-    //cout <<"SparsityA is :"<< sparsityA << "sparsityB is : "<<sparsityB <<"int(sparsityB*(p*n)) is : "<<ceil(sparsityB*(p*n))<<endl;
-
-    cout <<" Allocating memory for matrices aligned on 64-byte boundary for better performance\n"<<endl;
-    A = new double[m*p*sizeof( double )];
-    B = new double[p*n*sizeof( double )];
-    C = new double[m*n*sizeof( double )];
-    temp = new double[m*n*sizeof( double )];
-
-    if (A == NULL || B == NULL || C == NULL) {
-      cout<<"\n ERROR: Can't allocate memory for matrices. Aborting...\n"<<endl;
-      delete[] A;
-      delete[] B;
-      delete[] C;
-      return 1;
-    }
-
+    read_input();
     srand(time(NULL));
     double total_Time=0.0;
     init();
@@ -198,13 +230,9 @@ int main() {
     std::chrono::duration<double> itime = (end - start);
     total_Time += itime.count();
     std::cout << " Time for Multiplication: " << total_Time << endl;
-    print_output();
-    // write_output();
+    //print_output();
+    write_output();
     useful_macs();
-    cout << " Deallocating memory" << endl;
-    delete[] A;
-    delete[] B;
-    delete[] C;
+    deallocate();
 
-    cout<<" Example completed."<<endl;
 }
