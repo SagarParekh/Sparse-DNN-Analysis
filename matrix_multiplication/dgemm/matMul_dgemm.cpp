@@ -30,19 +30,22 @@ int read_input(){
     if(textfile.eof()){
       break;
     }
-    cout << " " << input[x];
+    // cout << " " << input[x];
     x++;
   }
   textfile.close();
-
   m = input[0], p = input[1], n = input[2];
-  cout <<" Initializing data for matrix multiplication C=A*B for matrix "
-          " A("<<m<<"x"<<p<<") and matrix B("<<p<<"x"<<n<<")\n"<<endl;
+  //cout <<" Initializing data for matrix multiplication C=A*B for matrix "
+  //        " A("<<m<<"x"<<p<<") and matrix B("<<p<<"x"<<n<<")\n"<<endl;
   alpha = input[3]; beta = input[4];
   densityA = input[5]; densityB = input[6];
   sparsityA = 1-densityA;
   sparsityB = 1-densityB;
-  cout <<" Allocating memory for matrices aligned on 64-byte boundary for better performance\n"<<endl;
+  cout<<endl;
+  cout<<" M is "<<m<<endl<<" P is "<<p<<endl<<" N is "<<n<<endl;
+  cout<<" Alpha is "<<alpha<<endl<<" Beta is "<<beta<<endl;
+  cout<<" Density of A is "<<densityA<<endl<<" Density of B is "<<densityB<<endl;
+  //cout <<" Allocating memory for matrices aligned on 64-byte boundary for better performance\n"<<endl;
   A = new double[m*p*sizeof( double )];
   B = new double[p*n*sizeof( double )];
   C = new double[m*n*sizeof( double )];
@@ -60,7 +63,7 @@ int read_input(){
 }
 
 void init(){
-    cout <<" Intializing matrix data\n"<<endl;
+    //cout <<" Intializing matrix data\n"<<endl;
     for (i = 0; i <(m*p); i++) {
         A[i] = 1+rand()%255;
     }
@@ -104,10 +107,10 @@ void init(){
 }
 
 void matmul(){
-    cout << " Computing matrix product using Intel(R) MKL dgemm function via CBLAS interface \n"<<endl;
+    //cout << " Computing matrix product using Intel(R) MKL dgemm function via CBLAS interface \n"<<endl;
     cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
                 m, n, p, alpha, A, p, B, n, beta, C, n);
-    cout<< " Computations completed.\n"<<endl;
+    cout<< "\n Computations completed.\n"<<endl;
 }
 
 void print_output(){
@@ -206,20 +209,20 @@ void useful_macs(){
   //     }
   //   }
   // }
-  cout<<"No of Useful MAC operations are: "<<mac_count<<endl;
+  cout<<"\n No of Useful MAC operations are: "<<mac_count<<endl;
 
 }
 
 void deallocate(){
-  cout << " Deallocating memory" << endl;
+  cout << "\n Deallocating memory" << endl;
   delete[] A;
   delete[] B;
   delete[] C;
-  cout<<" C++ file Executed. "<<endl;
+  cout<<"\n C++ file Executed. \n"<<endl;
 }
 
 void main() {
-    cout <<"\n This example computes real matrix C=alpha*A*B+beta*C using "<<endl<<" Intel(R) MKL function dgemm, where A, B, and  C are matrices and "<<endl<<" alpha and beta are double precision scalars\n"<<endl;
+    //cout <<"\n This example computes real matrix C=alpha*A*B+beta*C using "<<endl<<" Intel(R) MKL function dgemm, where A, B, and  C are matrices and "<<endl<<" alpha and beta are double precision scalars\n"<<endl;
     read_input();
     srand(time(NULL));
     double total_Time=0.0;
@@ -234,5 +237,4 @@ void main() {
     write_output();
     useful_macs();
     deallocate();
-
 }
