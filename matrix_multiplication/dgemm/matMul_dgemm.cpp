@@ -182,6 +182,20 @@ void write_output() {
 	myfile.close();
 }
 
+void write_output_for_wrapper(){
+  fstream myfile;
+	myfile.open("/home/sagar/Sparse-DNN-Analysis/python_wrapper/input_a_for_wrapper.txt",fstream::out);
+	for (i=0; i<(m*p); i++) {
+    myfile << A[i];
+    if(i==((m*p)-1)){
+      break;
+    }
+    myfile << ",";
+  }
+	myfile<<std::endl;
+	myfile.close();
+}
+
 void useful_macs(){
   int mac_count=0;
   if(densityA==1 && densityB==1){
@@ -235,6 +249,7 @@ void main() {
     std::cout << " Time for Multiplication: " << total_Time << endl;
     //print_output();
     write_output();
+    write_output_for_wrapper();
     useful_macs();
     deallocate();
 }

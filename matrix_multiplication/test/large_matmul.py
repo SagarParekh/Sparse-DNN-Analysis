@@ -4,8 +4,8 @@ import numpy as np
 
 f = open('/home/sagar/Sparse-DNN-Analysis/matrix_multiplication/dgemm/input_dgemm.txt').read()
 f = f.split(' ')
-p = int(f[1]);
-n = int(f[2]);
+p = int(f[1])
+n = int(f[2])
 
 f = open('/home/sagar/Sparse-DNN-Analysis/matrix_multiplication/dgemm/input_a.txt').read()
 A=f.split()
