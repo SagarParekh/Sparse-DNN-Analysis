@@ -13,7 +13,7 @@ import torch.nn as nn
 #     print(p.name,p.data)
 
 alexnet = models.alexnet(pretrained=True)
-# print(alexnet)
+print(alexnet)
 
 from torchvision import transforms
 transform = transforms.Compose([            #[1]
