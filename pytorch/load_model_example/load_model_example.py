@@ -42,7 +42,7 @@ optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 # Save the entire model
 PATH = 'checkpoint.pth.tar'
-torch.save(model, PATH)
+# torch.save(model, PATH)
 
 # Load the model
 # model = TheModelClass(*args, **kwargs)
